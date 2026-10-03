@@ -1,0 +1,22 @@
+:root {
+  --paper: #f3edde;
+  --paper-deep: #e8dfc9;
+  --paper-shadow: #d9cfb4;
+  --ink: #12100d;
+  --ink-soft: #2a2520;
+  --blue: #2e4e7e;
+  --blue-deep: #1e344f;
+  --orange: #d65a26;
+  --orange-soft: #e08a4c;
+  --grey: #8a8378;
+  --brown: #5c4a3a;
+  --cream-text: #f3edde;
+  --black-void: #060504;
+  --max-w: 1200px;
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+  --serif: "Newsreader", "Fraunces", Georgia, "Times New Roman", serif;
+  --hand: "Gochi Hand", "Newsreader", cursive;
+  --sans: "Space Grotesk", "Inter", system-ui, sans-serif;
+  --display: "Cal Sans", "Newsreader", Georgia, serif;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}

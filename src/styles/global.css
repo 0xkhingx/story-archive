@@ -1,0 +1,44 @@
+@import "./tokens.css";
+
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+html { scroll-behavior: smooth; }
+html, body { height: 100%; }
+body {
+  background: var(--black-void);
+  color: var(--cream-text);
+  font-family: var(--sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+::selection { background: var(--orange); color: var(--ink); }
+
+.paper-world {
+  background: var(--paper);
+  color: var(--ink);
+  background-image:
+    radial-gradient(ellipse at 20% 10%, rgba(0,0,0,0.035), transparent 55%),
+    radial-gradient(ellipse at 90% 90%, rgba(94,74,58,0.08), transparent 50%);
+}
+
+.wrap {
+  max-width: var(--max-w);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  clip-path: inset(50%); overflow: hidden; white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,264 @@
+/* Story pages — calm archive documents. The landing performs; this is where someone reads. */
+
+.story-page {
+  background: var(--paper);
+  color: var(--ink);
+  background-image:
+    radial-gradient(ellipse at 20% 10%, rgba(0,0,0,0.035), transparent 55%),
+    radial-gradient(ellipse at 90% 90%, rgba(94,74,58,0.08), transparent 50%);
+  min-height: 100vh;
+}
+
+.story-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1100px;
+  margin-inline: auto;
+  padding: 1.4rem var(--gutter);
+}
+.story-topbar a {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  opacity: 0.7;
+}
+.story-topbar a:hover { opacity: 1; }
+.story-topbar .mark {
+  font-family: var(--display);
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+}
+
+/* Cover frame */
+.story-cover {
+  max-width: 1100px;
+  margin-inline: auto;
+  padding: clamp(3rem, 8vh, 6rem) var(--gutter) 0;
+}
+.story-cover .eyebrow {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+.story-cover .meta {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  opacity: 0.55;
+  margin-top: 0.7rem;
+}
+.story-cover h1 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2.8rem, 7vw, 5rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  margin-top: 1.2rem;
+  text-wrap: balance;
+}
+.story-cover .thought {
+  font-family: var(--hand);
+  font-size: clamp(1.25rem, 2.6vw, 1.6rem);
+  line-height: 1.5;
+  opacity: 0.85;
+  margin-top: 1.1rem;
+  max-width: 34ch;
+}
+.story-cover figure {
+  margin: clamp(2.5rem, 6vh, 4rem) auto 0;
+  max-width: 1000px;
+}
+.story-cover img {
+  width: 100%;
+  height: auto;
+  display: block;
+  clip-path: polygon(1% 3%, 98% 0%, 100% 96%, 2% 100%, 0 60%);
+  background: var(--paper-deep);
+}
+
+/* Body: narrow measure inside a wider field so margin notes have somewhere to sit */
+.story-body {
+  max-width: 1000px;
+  margin-inline: auto;
+  padding: clamp(3rem, 7vh, 5rem) var(--gutter);
+}
+.story-prose {
+  max-width: 660px;
+  margin-inline: auto;
+  font-family: var(--hand);
+  font-size: clamp(1.15rem, 1.8vw, 1.35rem);
+  line-height: 1.75;
+}
+.story-prose p + p { margin-top: 1.5em; }
+.story-prose h2 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(1.6rem, 3.4vw, 2.2rem);
+  line-height: 1.1;
+  margin: 2.5em 0 0.8em;
+}
+.story-prose em { font-style: normal; border-bottom: 1px solid rgba(18,16,13,0.35); }
+
+/* Visual panel beat */
+.story-panel { margin: clamp(3rem, 8vh, 5rem) auto; max-width: 860px; }
+.story-panel img {
+  width: 100%;
+  height: auto;
+  display: block;
+  clip-path: polygon(1% 3%, 98% 0%, 100% 96%, 2% 100%, 0 60%);
+  background: var(--paper-deep);
+}
+.story-panel figcaption {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  opacity: 0.6;
+  margin-top: 0.9rem;
+  max-width: 60ch;
+}
+.story-panel.wide { max-width: 1100px; }
+
+/* Margin note — scribbled after writing */
+.margin-note {
+  font-family: var(--hand);
+  font-size: 1.02rem;
+  line-height: 1.6;
+  color: var(--brown);
+  border-left: 2px solid var(--orange);
+  padding-left: 1rem;
+  margin: 2rem 0;
+}
+@media (min-width: 1020px) {
+  .margin-note {
+    float: right;
+    width: 210px;
+    margin: 0.4rem -260px 1.2rem 2.2rem;
+  }
+}
+
+/* Isolated sentence */
+.pull-line {
+  font-family: var(--display);
+  font-size: clamp(1.7rem, 4.2vw, 2.5rem);
+  line-height: 1.25;
+  text-align: center;
+  text-wrap: balance;
+  max-width: 26ch;
+  margin: clamp(4rem, 12vh, 7rem) auto;
+}
+
+/* Quiet ending */
+.story-end {
+  text-align: center;
+  padding: clamp(4rem, 12vh, 8rem) var(--gutter) clamp(3rem, 8vh, 5rem);
+}
+.story-end .stayed {
+  font-family: var(--display);
+  font-size: clamp(1.8rem, 4.5vw, 2.8rem);
+}
+.story-end .tiny {
+  font-family: var(--hand);
+  font-size: 1.1rem;
+  opacity: 0.7;
+  margin-top: 1rem;
+}
+.next-story {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.2rem;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(18,16,13,0.2);
+  text-decoration: none;
+  text-align: left;
+}
+.next-story img {
+  width: 120px;
+  height: 80px;
+  object-fit: cover;
+  clip-path: polygon(2% 6%, 98% 0%, 100% 94%, 3% 100%);
+  background: var(--paper-deep);
+}
+.next-story .go {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.next-story .t {
+  font-family: var(--display);
+  font-size: 1.4rem;
+  margin-top: 0.3rem;
+}
+.next-story:hover .t { text-decoration: underline; }
+
+/* Archive index */
+.archive-wrap {
+  max-width: 860px;
+  margin-inline: auto;
+  padding: clamp(3rem, 8vh, 6rem) var(--gutter) 6rem;
+}
+.archive-wrap h1 {
+  font-family: var(--display);
+  font-size: clamp(2.6rem, 6vw, 4.2rem);
+  line-height: 1;
+}
+.archive-wrap .lede {
+  font-family: var(--hand);
+  font-size: 1.25rem;
+  opacity: 0.8;
+  margin-top: 1rem;
+  max-width: 36ch;
+}
+.archive-group { margin-top: 3.5rem; }
+.archive-group h2 {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid rgba(18,16,13,0.2);
+}
+.archive-row {
+  display: grid;
+  grid-template-columns: 3.2rem 1fr auto;
+  gap: 1.2rem;
+  align-items: baseline;
+  padding: 1.3rem 0;
+  border-bottom: 1px solid rgba(18,16,13,0.14);
+  text-decoration: none;
+  color: inherit;
+}
+.archive-row .num {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  opacity: 0.5;
+}
+.archive-row .t { font-family: var(--display); font-size: 1.5rem; }
+.archive-row .d {
+  font-family: var(--hand);
+  font-size: 1.05rem;
+  opacity: 0.7;
+  margin-top: 0.2rem;
+  max-width: 44ch;
+}
+.archive-row time {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  opacity: 0.5;
+  white-space: nowrap;
+}
+.archive-row:hover .t { text-decoration: underline; }
+@media (max-width: 640px) {
+  .archive-row { grid-template-columns: 2.4rem 1fr; }
+  .archive-row time { display: none; }
+}

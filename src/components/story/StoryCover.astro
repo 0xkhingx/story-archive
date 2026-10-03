@@ -1,0 +1,21 @@
+---
+interface Props {
+  category: string;
+  num: string;
+  title: string;
+  thought: string;
+  meta: string;
+  cover: string;
+  coverAlt?: string;
+}
+const { category, num, title, thought, meta, cover, coverAlt = "" } = Astro.props;
+---
+<section class="story-cover">
+  <p class="eyebrow">{category} / {num}</p>
+  <p class="meta">{meta}</p>
+  <h1>{title}</h1>
+  <p class="thought">{thought}</p>
+  <figure>
+    <img src={cover} alt={coverAlt} loading="eager" decoding="async" />
+  </figure>
+</section>

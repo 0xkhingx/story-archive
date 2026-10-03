@@ -1,0 +1,36 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+const { title = "Personal Story Archive", description = "Stories, scenes, memories and ideas that stayed differently." } = Astro.props;
+import "../styles/global.css";
+import "../styles/typography.css";
+import "../styles/landing.css";
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cal+Sans&family=Gochi+Hand&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=Space+Grotesk:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <slot />
+    <script>
+      document.documentElement.classList.add('js');
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.body.classList.add('reduced');
+      } else {
+        document.body.classList.remove('reduced');
+      }
+    </script>
+  </body>
+</html>

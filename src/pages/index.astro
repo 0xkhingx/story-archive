@@ -1,0 +1,208 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import IntroPinned from "../components/landing/IntroPinned.astro";
+import ScrollPill from "../components/shared/ScrollPill.astro";
+import HeroBirth from "../components/landing/HeroBirth.astro";
+import CategoryReveal from "../components/landing/CategoryReveal.astro";
+import FinalAct from "../components/landing/FinalAct.astro";
+---
+<BaseLayout title="Personal Story Archive — These are my stories">
+  <main>
+    <ScrollPill />
+    <IntroPinned />
+    <div data-landing>
+      <HeroBirth />
+      <CategoryReveal />
+      <FinalAct />
+    </div>
+  </main>
+
+  <script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+    gsap.registerPlugin(ScrollTrigger);
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (reduced) {
+      document.querySelectorAll(".reveal").forEach((el) => {
+        el.style.opacity = "1";
+        el.style.transform = "none";
+      });
+      const veil = document.querySelector("[data-intro-veil]");
+      if (veil) veil.style.opacity = "0";
+      const prelude = document.querySelector("[data-prelude]");
+      if (prelude) prelude.style.display = "none";
+      const firstPhrase = document.querySelector("[data-phrase]");
+      if (firstPhrase) firstPhrase.style.opacity = "1";
+      document.querySelectorAll("[data-fl],[data-fl-keep],[data-fi-anyway],[data-fi-mine]").forEach((el) => {
+        el.style.opacity = "1";
+        el.style.transform = "none";
+      });
+      const fshade = document.querySelector("[data-final-shade]");
+      if (fshade) fshade.style.opacity = "0";
+      const fportal = document.querySelector("[data-final-portal]");
+      if (fportal) fportal.style.opacity = "0.35";
+    } else {
+      // Scroll-triggered reveals
+      gsap.utils.toArray(".reveal").forEach((el) => {
+        gsap.to(el, {
+          opacity: 1, y: 0, duration: 0.9, ease: "power3.out",
+          scrollTrigger: { trigger: el, start: "top 88%" }
+        });
+      });
+
+      // One pinned passage: overlapping thought-fades + gradual paper arrival
+      const phrases = gsap.utils.toArray("[data-phrase]");
+      const tl = gsap.timeline({
+        defaults: { ease: "none" },
+        scrollTrigger: {
+          trigger: "[data-intro-pin]",
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 1.2,
+        },
+      });
+
+      // Prelude whisper: delayed arrival, yields on first scroll as portal stirs
+      gsap.to("[data-prelude]", { opacity: 0.8, duration: 1.8, delay: 1.4, ease: "power2.out" });
+      gsap.set("[data-portal-wrap]", { scale: 1, filter: "brightness(1)" });
+      tl.to("[data-prelude]", { opacity: 0, duration: 0.8, immediateRender: false }, 0.2);
+      tl.to("[data-portal-wrap]", { filter: "brightness(1.12)", duration: 1 }, 0.2);
+
+      phrases.forEach((ph, i) => {
+        const at = 2 + i * 2;
+        tl.fromTo(ph, { opacity: 0, y: 16 },
+          { opacity: 1, y: 0, duration: 0.9, immediateRender: false }, at);
+        if (i < phrases.length - 1) {
+          tl.to(ph, { opacity: 0, y: -14, duration: 0.9 }, at + 1.1);
+          tl.to("[data-portal-wrap]", { filter: `brightness(${(1.2 + i * 0.08).toFixed(2)})`, duration: 0.9 }, at + 1.1);
+        } else {
+          tl.to(ph, { opacity: 0, y: -14, duration: 1.2 }, at + 1.5);
+        }
+      });
+
+      // Finale: portal expands until its light fills the viewport, becoming paper
+      tl.to("[data-portal-wrap]", { scale: 2.4, filter: "brightness(2.2)", duration: 2 },
+        phrases.length * 2 + 1.6);
+
+      // Black gives way to paper while last line dissolves — the veil lands directly on the hero
+      tl.fromTo("[data-intro-veil]", { opacity: 0 }, { opacity: 1, duration: 1.8 },
+        phrases.length * 2 + 1.6);
+
+      // Guided category procession: one idea replaces another on a pinned stage
+      const panels = gsap.utils.toArray("[data-cat-panel]");
+      const ctl = gsap.timeline({
+        defaults: { ease: "none" },
+        scrollTrigger: {
+          trigger: "[data-cat-stage]",
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 1.1,
+        },
+      });
+
+      // Arrival bridge: FILMS materializes as the stage pins (no hard cut from hero)
+      gsap.fromTo(panels[0], { opacity: 0, y: 40 }, {
+        opacity: 1, y: 0, ease: "none",
+        scrollTrigger: { trigger: "[data-cat-stage]", start: "top bottom", end: "top top", scrub: 1 },
+      });
+      panels.forEach((panel, i) => {
+        const at = i * 2;
+        const img = panel.querySelector("[data-cat-img]");
+        const words = panel.querySelectorAll(".cine-kicker, .cine-line");
+        const letters = panel.querySelectorAll(".cine-char");
+        ctl.fromTo(panel, { opacity: i === 0 ? 1 : 0, y: i === 0 ? 0 : 44 },
+          { opacity: 1, y: 0, duration: 0.9 }, at);
+        if (img) ctl.fromTo(img, { scale: 1.08, y: 24 }, { scale: 1, y: -24, duration: 1.9 }, at);
+        ctl.fromTo(words, { y: 28, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, stagger: 0.12 }, at + 0.3);
+        ctl.fromTo(letters,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.1, ease: "steps(1)", stagger: 0.14 }, at + 0.45);
+        if (i < panels.length - 1) {
+          ctl.to(words, { opacity: 0, y: -18, duration: 0.5 }, at + 1.05);
+          ctl.to(panel, { opacity: 0, y: -34, duration: 0.9 }, at + 1.1);
+        }
+      });
+
+      // Birth of the archive: black recedes, torn paper rises, observer emerges
+      const btl = gsap.timeline({
+        defaults: { ease: "none" },
+        scrollTrigger: { trigger: "[data-birth]", start: "top top", end: "bottom bottom", scrub: 1.1 },
+      });
+      btl.fromTo("[data-birth-paper]",
+        { clipPath: "inset(100% 0% 0% 0%)" },
+        { clipPath: "inset(0% 0% 0% 0%)", duration: 1 }, 0);
+      btl.fromTo("[data-birth-torn]",
+        { y: () => window.innerHeight + 90 },
+        { y: -130, duration: 1 }, 0);
+      btl.fromTo("[data-birth-fig]",
+        { opacity: 0, scale: 1.12, y: 60 },
+        { opacity: 1, scale: 1, y: 0, duration: 0.85 }, 0.25);
+      btl.fromTo("[data-birth-copy] > *",
+        { opacity: 0, y: 34 },
+        { opacity: 1, y: 0, duration: 0.9, stagger: 0.12 }, 0.5);
+      btl.to("[data-birth-fig]", { scale: 1.07, duration: 1 }, 1.4);
+      btl.to("[data-birth-title]", { y: -24, duration: 1 }, 1.4);
+
+      // Portal resting is handled in CSS (content-visibility parking)
+
+      // Re-measure triggers once assets settle (late images/fonts shift positions)
+      ScrollTrigger.config({ ignoreMobileResize: true });
+      window.addEventListener("load", () => ScrollTrigger.refresh());
+      if (document.fonts?.ready) document.fonts.ready.then(() => ScrollTrigger.refresh());
+      setTimeout(() => ScrollTrigger.refresh(), 2500);
+
+      // Persistent pill: scroll cue that transforms into the archive CTA at the end
+      const pill = document.querySelector("[data-scroll-pill]");
+      const pillLabel = pill?.querySelector("[data-pill-label]");
+      let pillFinal = false;
+      pill?.addEventListener("click", (e) => {
+        if (pillFinal) return;
+        e.preventDefault();
+        window.scrollBy({ top: window.innerHeight * 0.85, behavior: reduced ? "auto" : "smooth" });
+      });
+      ScrollTrigger.create({
+        trigger: "[data-final]",
+        start: "top top",
+        end: "bottom bottom",
+        onUpdate: (self) => {
+          const f = self.progress > 0.94;
+          if (f === pillFinal) return;
+          pillFinal = f;
+          pill?.classList.toggle("is-final", f);
+          if (pillLabel) pillLabel.textContent = f ? "Enter the archive" : "Scroll";
+          pill?.setAttribute("aria-label", f ? "Enter the archive" : "Scroll down");
+        },
+      });
+
+      // Final act: retreat into darkness, portal callback, invitation
+      const flines = gsap.utils.toArray("[data-fl]");
+      const shadeSteps = [0.22, 0.55, 0.9];
+      const ftl = gsap.timeline({
+        defaults: { ease: "none" },
+        scrollTrigger: { trigger: "[data-final]", start: "top top", end: "bottom bottom", scrub: 1.1 },
+      });
+      ftl.fromTo("[data-final-fig]",
+        { clipPath: "inset(16% 9% 16% 9%)", scale: 0.86 },
+        { clipPath: "inset(0% 0% 0% 0%)", scale: 1, duration: 1.0 }, 0);
+      ftl.to("[data-final-fig]", { scale: 1.18, duration: 2.6 }, 1.0);
+      flines.forEach((ln, i) => {
+        const at = 1.2 + i * 1.1;
+        ftl.fromTo(ln, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.6 }, at);
+        ftl.to(ln, { color: "#f5efe0", duration: 0.8 }, at);
+        ftl.to("[data-final-shade]", { opacity: shadeSteps[i], duration: 0.9 }, at);
+        ftl.to(ln, { opacity: 0, y: -14, duration: 0.6 }, at + 0.75);
+      });
+      ftl.fromTo("[data-fl-keep]", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8 }, 5.0);
+      ftl.to("[data-fl-keep]", { opacity: 0, duration: 1 }, 6.6);
+      ftl.fromTo("[data-fi-anyway]", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.6 }, 7.0);
+      ftl.to("[data-fi-anyway]", { opacity: 0, duration: 0.8 }, 8.2);
+      ftl.fromTo("[data-fi-mine]", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.6 }, 8.6);
+      ftl.to("[data-final-fig]", { opacity: 0, duration: 1.4 }, 9.2);
+      ftl.to("[data-final-shade]", { opacity: 1, duration: 1.4 }, 9.2);
+      ftl.to("[data-fi-mine]", { opacity: 0, duration: 0.8 }, 9.8);
+      ftl.fromTo("[data-final-portal]", { opacity: 0 }, { opacity: 0.5, duration: 1.4 }, 10.2);
+    }
+  </script>
+</BaseLayout>

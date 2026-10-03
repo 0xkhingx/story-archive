@@ -1,0 +1,18 @@
+---
+interface Props {
+  tiny?: string;
+  next: { slug: string; title: string; cover: string; num: string; category: string };
+}
+const { tiny = "Kept here so I don't lose it.", next } = Astro.props;
+---
+<section class="story-end">
+  <p class="stayed">That’s what stayed.</p>
+  <p class="tiny">{tiny}</p>
+  <a class="next-story" href={`/stories/${next.slug}`}>
+    <img src={next.cover} alt="" loading="lazy" decoding="async" />
+    <span>
+      <span class="go">Next story →</span>
+      <span class="t" style="display:block">{next.category} / {next.num} — {next.title}</span>
+    </span>
+  </a>
+</section>

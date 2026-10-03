@@ -1,0 +1,38 @@
+---
+import PortalFieldCollection from "../../shaders/portal-field/PortalFieldCollection.astro";
+---
+<section class="intro-pin" data-intro-pin aria-label="Entrance — a slow passage into the archive">
+  <div class="intro-sticky">
+    <div class="intro-bg" data-intro-bg aria-hidden="true"></div>
+    <div class="portal-breathe" aria-hidden="true">
+      <div class="portal-fallback" aria-hidden="true"></div>
+      <div data-portal-wrap>
+        <PortalFieldCollection
+          speed={1.40}
+          size={1.00}
+          length={1.00}
+          density={1.46}
+          opacity={1.00}
+          hue={0}
+          saturation={1.31}
+          brightness={1.00}
+        />
+      </div>
+    </div>
+    <div class="portal-grain" aria-hidden="true"></div>
+    <div class="intro-veil" data-intro-veil aria-hidden="true"></div>
+
+    <div class="intro-center">
+      <p class="prelude" data-prelude>before the stories, this.</p>
+      <p class="latin-line intro-phrase is-first" data-phrase>
+        viri nascuntur ideo<br />memento quod mori debebis
+      </p>
+      <p class="latin-line intro-phrase" data-phrase>
+        Nolito mori sine narrando<br />fabulas tuas
+        <span class="intro-mark" aria-hidden="true"></span>
+      </p>
+      <p class="latin-line intro-phrase" data-phrase>These are my stories</p>
+      <p class="intro-sub intro-phrase" data-phrase>or rather, some stories that hit me differently.</p>
+    </div>
+  </div>
+</section>

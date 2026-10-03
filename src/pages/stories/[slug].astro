@@ -1,0 +1,54 @@
+---
+import { getCollection, render } from "astro:content";
+import StoryLayout from "../../layouts/StoryLayout.astro";
+import StoryCover from "../../components/story/StoryCover.astro";
+import StoryEnding from "../../components/story/StoryEnding.astro";
+
+export async function getStaticPaths() {
+  const stories = await getCollection("stories");
+  return stories.map((entry) => ({ params: { slug: entry.id.replace(/\.mdx?$/, "") }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const CATEGORY_LABEL = { films: "Films", animation: "Animation", life: "Life" } as const;
+const catLabel = CATEGORY_LABEL[entry.data.category];
+const meta = entry.data.source ? `${catLabel} · ${entry.data.source}` : catLabel;
+
+const all = await getCollection("stories");
+const inCategory = all
+  .filter((s) => s.data.category === entry.data.category)
+  .sort((a, b) => +a.data.date - +b.data.date);
+const num = String(inCategory.findIndex((s) => s.id === entry.id) + 1).padStart(3, "0");
+
+const byDate = [...all].sort((a, b) => +a.data.date - +b.data.date);
+const nextEntry = byDate[(byDate.findIndex((s) => s.id === entry.id) + 1) % byDate.length];
+const nextInCategory = all
+  .filter((s) => s.data.category === nextEntry.data.category)
+  .sort((a, b) => +a.data.date - +b.data.date);
+const next = {
+  slug: nextEntry.id.replace(/\.mdx?$/, ""),
+  title: nextEntry.data.title,
+  cover: nextEntry.data.cover,
+  num: String(nextInCategory.findIndex((s) => s.id === nextEntry.id) + 1).padStart(3, "0"),
+  category: CATEGORY_LABEL[nextEntry.data.category],
+};
+---
+<StoryLayout title={`${entry.data.title} — Personal Story Archive`} description={entry.data.description}>
+  <StoryCover
+    category={catLabel}
+    num={num}
+    title={entry.data.title}
+    thought={entry.data.description}
+    meta={meta}
+    cover={entry.data.cover}
+    coverAlt={entry.data.coverAlt}
+  />
+  <div class="story-body">
+    <div class="story-prose">
+      <Content />
+    </div>
+  </div>
+  <StoryEnding next={next} />
+</StoryLayout>

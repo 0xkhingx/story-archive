@@ -1,0 +1,42 @@
+---
+import { getCollection } from "astro:content";
+import StoryLayout from "../../layouts/StoryLayout.astro";
+
+const CATEGORY_LABEL = { films: "Films", animation: "Animation", life: "Life" } as const;
+const ORDER = ["films", "animation", "life"] as const;
+
+const all = await getCollection("stories");
+const byDateDesc = (a, b) => +b.data.date - +a.data.date;
+const groups = ORDER.map((cat) => ({
+  cat,
+  items: all
+    .filter((s) => s.data.category === cat)
+    .sort((a, b) => +a.data.date - +b.data.date)
+    .map((s, i) => ({ entry: s, num: String(i + 1).padStart(3, "0") })),
+})).filter((g) => g.items.length > 0);
+
+const fmt = (d) => d.toLocaleDateString("en-GB", { month: "short", year: "numeric" });
+---
+<StoryLayout title="Stories — Personal Story Archive" description="Every file in the archive.">
+  <div class="archive-wrap">
+    <p class="label">The archive</p>
+    <h1>Stories</h1>
+    <p class="lede">Every file, in the order it stayed with me. Open one.</p>
+    {groups.map((g) => (
+      <section class="archive-group">
+        <h2>{CATEGORY_LABEL[g.cat]}</h2>
+        {g.items.map(({ entry, num }) => (
+          <a class="archive-row" href={`/stories/${entry.id.replace(/\.mdx?$/, "")}`}>
+            <span class="num">{num}</span>
+            <span>
+              <span class="t" style="display:block">{entry.data.title}</span>
+              <span class="d" style="display:block">{entry.data.description}</span>
+            </span>
+            <time>{fmt(entry.data.date)}</time>
+          </a>
+        ))}
+      </section>
+    ))}
+    <p style="margin-top:3rem"><a href="/" style="font-family:var(--sans);font-size:0.78rem;letter-spacing:0.18em;text-transform:uppercase;opacity:0.7">← Back to entrance</a></p>
+  </div>
+</StoryLayout>

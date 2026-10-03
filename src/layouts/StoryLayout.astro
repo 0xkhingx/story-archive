@@ -1,0 +1,19 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import "../styles/story.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const { title = "Personal Story Archive", description = "Stories that stayed differently." } = Astro.props;
+---
+<BaseLayout title={title} description={description}>
+  <div class="story-page">
+    <nav class="story-topbar" aria-label="Archive">
+      <a href="/stories">← Archive</a>
+      <span class="mark">Things that stayed.</span>
+    </nav>
+    <slot />
+  </div>
+</BaseLayout>

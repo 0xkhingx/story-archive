@@ -1,0 +1,44 @@
+.serif { font-family: var(--serif); }
+.sans { font-family: var(--sans); }
+
+.latin-line {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2rem, 6vw, 4.75rem);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  color: #f5efe0;
+}
+.on-paper .latin-line, .paper-world .latin-line { color: var(--ink); }
+
+.editorial-h {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(2.4rem, 6vw, 4.6rem);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+}
+.editorial-sub {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(1.1rem, 2.4vw, 1.5rem);
+  opacity: 0.85;
+}
+.label {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+.body-copy {
+  font-family: var(--hand);
+  font-size: clamp(1.15rem, 1.8vw, 1.4rem);
+  line-height: 1.7;
+}
+.rule {
+  width: 72px; height: 1px;
+  background: currentColor;
+  opacity: 0.5;
+  margin: 1.2rem 0;
+}
