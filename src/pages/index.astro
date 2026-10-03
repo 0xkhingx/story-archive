@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import IntroPinned from "../components/landing/IntroPinned.astro";
 import ScrollPill from "../components/shared/ScrollPill.astro";
+import PortalTakeover from "../components/shared/PortalTakeover.astro";
 import HeroBirth from "../components/landing/HeroBirth.astro";
 import CategoryReveal from "../components/landing/CategoryReveal.astro";
 import FinalAct from "../components/landing/FinalAct.astro";
@@ -9,6 +10,7 @@ import FinalAct from "../components/landing/FinalAct.astro";
 <BaseLayout title="Personal Story Archive — These are my stories">
   <main>
     <ScrollPill />
+    <PortalTakeover />
     <IntroPinned />
     <div data-landing>
       <HeroBirth />
@@ -156,11 +158,18 @@ import FinalAct from "../components/landing/FinalAct.astro";
       // Persistent pill: scroll cue that transforms into the archive CTA at the end
       const pill = document.querySelector("[data-scroll-pill]");
       const pillLabel = pill?.querySelector("[data-pill-label]");
+      const takeover = document.querySelector("[data-takeover]");
       let pillFinal = false;
       pill?.addEventListener("click", (e) => {
-        if (pillFinal) return;
         e.preventDefault();
-        window.scrollBy({ top: window.innerHeight * 0.85, behavior: reduced ? "auto" : "smooth" });
+        if (!pillFinal) {
+          window.scrollBy({ top: window.innerHeight * 0.85, behavior: reduced ? "auto" : "smooth" });
+          return;
+        }
+        if (reduced || !takeover) { window.location.href = "/stories"; return; }
+        if (takeover.classList.contains("is-open")) return;
+        takeover.classList.add("is-open");
+        window.setTimeout(() => { window.location.href = "/stories"; }, 900);
       });
       ScrollTrigger.create({
         trigger: "[data-final]",

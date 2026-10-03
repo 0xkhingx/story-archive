@@ -10,12 +10,12 @@ interface Props {
 }
 const { category, num, title, thought, meta, cover, coverAlt = "" } = Astro.props;
 ---
-<section class="story-cover">
-  <p class="eyebrow">{category} / {num}</p>
-  <p class="meta">{meta}</p>
-  <h1>{title}</h1>
-  <p class="thought">{thought}</p>
-  <figure>
-    <img src={cover} alt={coverAlt} loading="eager" decoding="async" />
+<section class="story-cover" data-beat="cover">
+  <p class="eyebrow" data-cover-line>{category} / {num}</p>
+  <p class="meta" data-cover-line>{meta}</p>
+  <h1 data-cover-line>{title}</h1>
+  <p class="thought" data-cover-line>{thought}</p>
+  <figure data-cover-figure>
+    <img src={cover} alt={coverAlt} loading="eager" decoding="async" data-cover-img />
   </figure>
 </section>

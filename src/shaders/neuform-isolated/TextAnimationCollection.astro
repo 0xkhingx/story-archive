@@ -3,18 +3,15 @@
  * TextAnimationCollection (threeui-intro variant) — Astro port of the exact
  * ThreeUI source bundle (revision 5a736cd3c1f6f19802f61ebb10e1701b9f7aa26e).
  *
- * Mirrors NeuformIsolatedEffects' threeUIIntro definition + buildFocusedDocument:
- * the authored creator-studio-intro.html is isolated to #stage inside a
- * sandboxed srcDoc iframe, with the introWordmark channel looping the first
- * authored beat (chromatic wordmark assembly, 0 → 1.7s, hold 1.1s).
+ * srcDoc assembly lives in ./build-wordmark-srcdoc (plain .ts) so no HTML
+ * parser ever scans the embedded document strings.
  *
  * One deliberate parameterization: the authored wordmark text ("ThreeUI") is
  * exposed as an optional `text` prop (default: exact authored value) so the
  * same assembly mechanism can set our own headers. Structure, shaders,
  * motion, timing, and isolation are untouched.
  */
-import fs from "node:fs";
-import path from "node:path";
+import { buildWordmarkSrcDoc, wordmarkBackground, WORDMARK_TITLE } from "./build-wordmark-srcdoc";
 
 export interface Props {
   variant?: "threeui-intro";
@@ -41,141 +38,9 @@ const safeMode = mode === "light" ? "light" : "dark";
 const safeHue = clamp(hue, -180, 180);
 const safeSaturation = clamp(saturation, 0, 2);
 const safeBrightness = clamp(brightness, 0.35, 1.65);
+const background = wordmarkBackground(safeMode);
 
-// threeUIIntro definition: theme nativeMode dark; configured mode dark → no invert
-const BACKGROUND = safeMode === "light" ? "#f4f7fb" : "#000000";
-const TITLE = "ThreeUI chromatic wordmark intro";
-const TARGETS = [{ selector: "#stage", role: "background" }];
-const HIDDEN_TARGETS = [".sr"];
-
-const THREEUI_MARK_SVG = `<svg viewBox="0 0 512 512" aria-hidden="true">
-  <defs>
-    <mask id="threeui-intro-cut" maskUnits="userSpaceOnUse" x="0" y="0" width="512" height="512">
-      <rect width="512" height="512" fill="#000"/>
-      <circle cx="256" cy="256" r="208" fill="#fff"/>
-      <g fill="none" stroke="#000" stroke-linecap="round" stroke-width="28">
-        <path d="M36 178C112 252 184 264 260 196C336 128 404 114 482 180"/>
-        <path d="M36 292C112 366 184 378 260 310C336 242 404 228 482 294"/>
-      </g>
-    </mask>
-  </defs>
-  <rect width="512" height="512" fill="#f5f5f7" mask="url(#threeui-intro-cut)"/>
-</svg>`;
-
-const INTRO_WORDMARK = {
-  sceneSelector: "#comp .scene:first-child",
-  text,
-  fontSize: 210,
-  endTime: 1.7,
-  holdTime: 1.1,
-  logoSvg: THREEUI_MARK_SVG,
-};
-
-const rawSource = fs.readFileSync(
-  path.join(process.cwd(), "src/shaders/neuform-isolated/sources/creator-studio-intro.html"),
-  "utf-8"
-);
-
-const targetJson = JSON.stringify(TARGETS).replace(/</g, "\\u003c");
-const hiddenTargetJson = JSON.stringify(HIDDEN_TARGETS).replace(/</g, "\\u003c");
-const introWordmarkJson = JSON.stringify(INTRO_WORDMARK).replace(/</g, "\\u003c");
-const modeJson = JSON.stringify(safeMode);
-const introWordmarkStyle = `${INTRO_WORDMARK.sceneSelector} .tx { font-size: ${INTRO_WORDMARK.fontSize}px !important; }`;
-
-const focusStyle = `<style data-threeui-focus>
-html, body { width: 100% !important; height: 100% !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; overflow: hidden !important; background: ${BACKGROUND} !important; color-scheme: ${safeMode} !important; }
-body { position: relative !important; display: flex !important; align-items: center !important; justify-content: center !important; }
-body > * { visibility: hidden !important; }
-body[data-threeui-ready] > [data-threeui-role] { visibility: visible !important; }
-[data-threeui-residual] { display: none !important; }
-[data-threeui-hidden] { display: none !important; }
-[data-threeui-role="background"] { position: fixed !important; inset: 0 !important; width: 100% !important; height: 100% !important; max-width: none !important; max-height: none !important; z-index: 0 !important; opacity: 1 !important; pointer-events: none !important;  }
-[data-threeui-role="background"][data-threeui-fit="contain-square"] { position: absolute !important; top: 50% !important; right: auto !important; bottom: auto !important; left: 50% !important; width: min(100vw, 100vh) !important; height: min(100vw, 100vh) !important; aspect-ratio: 1 / 1 !important; transform: translate(-50%, -50%) !important; }
-[data-threeui-role="button"] { position: relative !important; z-index: 2 !important; opacity: 1 !important; flex: none !important; }
-[data-threeui-role="button"]:not([data-threeui-preserve-transform]) { transform: none !important; }
-[data-threeui-role="visual"] { position: relative !important; z-index: 1 !important; width: min(100%, 1040px) !important; max-width: 1040px !important; max-height: 100% !important; margin: auto !important; padding: 24px !important; overflow: auto !important; opacity: 1 !important; filter: none !important; }
-[data-threeui-role="visual"]:not([data-threeui-preserve-transform]) { transform: none !important; }
-[data-threeui-role="visual"][data-threeui-fit="contain-square"] { flex: none !important; width: min(calc(100vw - 32px), calc(100vh - 32px)) !important; max-width: none !important; height: min(calc(100vw - 32px), calc(100vh - 32px)) !important; max-height: none !important; aspect-ratio: 1 / 1 !important; padding: 0 !important; overflow: hidden !important; }
-[data-threeui-role="visual"][data-threeui-fit="wide-wordmark"] { width: min(calc(100vw - 48px), 1180px) !important; max-width: calc(100vw - 48px) !important; height: auto !important; max-height: none !important; aspect-ratio: 16 / 3 !important; padding: 0 !important; overflow: hidden !important; }
-[data-threeui-role="visual"][data-threeui-fit="portrait-stage"] { position: absolute !important; top: 50% !important; right: auto !important; bottom: auto !important; left: 50% !important; width: 1080px !important; max-width: none !important; height: 1350px !important; max-height: none !important; padding: 0 !important; overflow: hidden !important; transform-origin: center !important; }
-${introWordmarkStyle}
-</style>`;
-
-const focusScript = `<script data-threeui-focus>
-(function () {
-  document.documentElement.dataset.sfMode = ${modeJson};
-  var isolated = false;
-  function isolate() {
-    if (isolated) return;
-    var specs = ${targetJson};
-    var hiddenSelectors = ${hiddenTargetJson};
-    var introWordmark = ${introWordmarkJson};
-    var roots = [];
-    hiddenSelectors.forEach(function (selector) {
-      document.querySelectorAll(selector).forEach(function (element) {
-        element.setAttribute('data-threeui-hidden', '');
-        element.setAttribute('aria-hidden', 'true');
-        if ('inert' in element) element.inert = true;
-      });
-    });
-    specs.forEach(function (spec) {
-      var element = document.querySelector(spec.selector);
-      if (!element) return;
-      element.setAttribute('data-threeui-role', spec.role);
-      if (spec.fit) element.setAttribute('data-threeui-fit', spec.fit);
-      if (spec.preserveTransform) element.setAttribute('data-threeui-preserve-transform', '');
-      if (!roots.some(function (root) { return root.contains(element); })) roots.push(element);
-    });
-    if (introWordmark) {
-      var introScene = document.querySelector(introWordmark.sceneSelector);
-      var introText = introScene && introScene.querySelector('.tx');
-      var introMark = introText && introText.querySelector('.mark');
-      if (introText && introMark) {
-        introMark.style.display = 'none';
-        var introCharacters = Array.from(introText.children).filter(function (element) { return element !== introMark; });
-        introCharacters.forEach(function (element, index) {
-          element.textContent = introWordmark.text[index] === ' ' ? '\\u00a0' : (introWordmark.text[index] || '');
-          element.style.display = index < introWordmark.text.length ? 'inline-block' : 'none';
-        });
-      }
-      /* assemble once from zero, then hold the assembled state — no loop */
-      var introT0 = null;
-      function renderIntroWordmarkOnce(now) {
-        if (typeof window.__seek !== 'function') { requestAnimationFrame(renderIntroWordmarkOnce); return; }
-        if (introT0 === null) introT0 = now;
-        var t = (now - introT0) / 1000;
-        if (t >= introWordmark.endTime) { window.__seek(introWordmark.endTime); return; }
-        window.__seek(t);
-        requestAnimationFrame(renderIntroWordmarkOnce);
-      }
-      requestAnimationFrame(renderIntroWordmarkOnce);
-    }
-    if (!roots.length) return;
-    isolated = true;
-    roots.forEach(function (root) {
-      var placeholderLink = root.matches('a[href="#"]') ? root : root.querySelector('a[href="#"]');
-      if (placeholderLink) placeholderLink.addEventListener('click', function (event) { event.preventDefault(); });
-      document.body.appendChild(root);
-    });
-    Array.from(document.body.children).forEach(function (element) {
-      if (roots.indexOf(element) !== -1) return;
-      element.setAttribute('data-threeui-residual', '');
-      element.setAttribute('aria-hidden', 'true');
-      if ('inert' in element) element.inert = true;
-    });
-    document.body.setAttribute('data-threeui-ready', '');
-    requestAnimationFrame(function () { window.dispatchEvent(new Event('resize')); });
-  }
-  function scheduleIsolation() { setTimeout(isolate, 100); }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', scheduleIsolation, { once: true });
-  else scheduleIsolation();
-  window.addEventListener('load', isolate, { once: true });
-})();
-</script>`;
-
-const srcDoc = rawSource
-  .replace(/<\/head>/i, `${focusStyle}</head>`)
-  .replace(/<\/body>/i, `${focusScript}</body>`);
+const srcDoc = buildWordmarkSrcDoc({ mode: safeMode, text });
 
 const filter =
   safeHue === 0 && safeSaturation === 1 && safeBrightness === 1
@@ -183,7 +48,7 @@ const filter =
     : `hue-rotate(${safeHue}deg) saturate(${safeSaturation}) brightness(${safeBrightness})`;
 ---
 <iframe
-  title={TITLE}
+  title={WORDMARK_TITLE}
   srcdoc={srcDoc}
   sandbox="allow-scripts"
   loading="lazy"
@@ -194,7 +59,7 @@ const filter =
     width: "100%",
     height: "100%",
     border: 0,
-    background: BACKGROUND,
+    background,
     ...(filter ? { filter } : {}),
   }}
 />

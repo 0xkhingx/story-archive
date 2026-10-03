@@ -1,0 +1,60 @@
+---
+import { getCollection } from "astro:content";
+import StoryLayout from "../../../layouts/StoryLayout.astro";
+
+export function getStaticPaths() {
+  return [{ params: { category: "films" } }, { params: { category: "animation" } }, { params: { category: "life" } }];
+}
+
+const META = {
+  films: {
+    title: "Films",
+    line: "Moments from films that refused to leave.",
+    img: "/images/environments/films-collage.webp",
+    alt: "Retro collage of film characters in torn-paper strips",
+  },
+  animation: {
+    title: "Animation",
+    line: "Drawings that said what people couldn't.",
+    img: "/images/environments/animation-collage.webp",
+    alt: "Retro collage of beloved animation and cartoon characters",
+  },
+  life: {
+    title: "Life",
+    line: "Things that actually happened to me.",
+    img: "/images/environments/street-walk.webp",
+    alt: "Walking through a Lagos street at sunset",
+  },
+} as const;
+
+const { category } = Astro.params;
+const meta = META[category];
+const stories = (await getCollection("stories"))
+  .filter((s) => s.data.category === category)
+  .sort((a, b) => +a.data.date - +b.data.date);
+const fmt = (d) => d.toLocaleDateString("en-GB", { month: "short", year: "numeric" });
+---
+<StoryLayout title={`${meta.title} — Personal Story Archive`} description={meta.line}>
+  <header class="cat-hero">
+    <img src={meta.img} alt={meta.alt} loading="eager" decoding="async" />
+    <div class="cat-hero-text">
+      <p class="label">The archive / {meta.title}</p>
+      <h1>{meta.title}</h1>
+      <p class="cat-hero-line">{meta.line}</p>
+    </div>
+  </header>
+  <div class="archive-wrap cat-list">
+    {stories.map((s, i) => (
+      <a class="archive-row" href={`/stories/${s.id.replace(/\.mdx?$/, "")}`}>
+        <span class="num">{String(i + 1).padStart(3, "0")}</span>
+        <span>
+          <span class="t" style="display:block">{s.data.title}</span>
+          <span class="d" style="display:block">{s.data.description}</span>
+        </span>
+        <img class="row-frag" src={s.data.cover} alt="" loading="lazy" decoding="async" />
+        <time>{fmt(s.data.date)}</time>
+      </a>
+    ))}
+    <p style="margin-top:3rem"><a href="/stories" style="font-family:var(--sans);font-size:0.78rem;letter-spacing:0.18em;text-transform:uppercase;opacity:0.7">← Back to the archive</a></p>
+  </div>
+</StoryLayout>

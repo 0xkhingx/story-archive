@@ -52,3 +52,104 @@ const next = {
   </div>
   <StoryEnding next={next} />
 </StoryLayout>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  gsap.registerPlugin(ScrollTrigger);
+
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (!reduced) {
+    // Cover: eyebrow → title → thought, then torn-mask hero reveal
+    gsap.from("[data-beat='cover'] [data-cover-line]", {
+      opacity: 0, y: 26, duration: 0.9, ease: "power3.out", stagger: 0.12,
+      scrollTrigger: { trigger: "[data-beat='cover']", start: "top 78%", toggleActions: "play none none none" },
+    });
+    gsap.fromTo("[data-cover-figure]",
+      { clipPath: "inset(10% 5% 10% 5%)" },
+      { clipPath: "inset(0% 0% 0% 0%)", duration: 1.2, ease: "power3.out",
+        scrollTrigger: { trigger: "[data-cover-figure]", start: "top 72%", toggleActions: "play none none none" } });
+    gsap.fromTo("[data-cover-figure] img",
+      { scale: 1.06 }, { scale: 1, duration: 1.6, ease: "power3.out",
+        scrollTrigger: { trigger: "[data-cover-figure]", start: "top 72%", toggleActions: "play none none none" } });
+
+    // Lede: first paragraph only — everything else stays still
+    gsap.from(".story-prose > p:first-of-type", {
+      opacity: 0, y: 20, duration: 0.9, ease: "power3.out",
+      scrollTrigger: { trigger: ".story-prose > p:first-of-type", start: "top 88%", toggleActions: "play none none none" },
+    });
+
+    // Panels by declared effect
+    document.querySelectorAll("[data-beat='panel']").forEach((fig) => {
+      const fx = fig instanceof HTMLElement ? fig.dataset.effect || "rise" : "rise";
+      const img = fig.querySelector("img");
+
+      if (fx === "split") {
+        const left = fig.querySelector(".split-half.left");
+        const right = fig.querySelector(".split-half.right");
+        const splitTrigger = { trigger: fig, start: "top 85%", end: "top 40%", scrub: 1 };
+        if (left) gsap.fromTo(left, { x: -60, opacity: 0 }, { x: 0, opacity: 1, ease: "none", scrollTrigger: splitTrigger });
+        if (right) gsap.fromTo(right, { x: 60, opacity: 0 }, { x: 0, opacity: 1, ease: "none", scrollTrigger: splitTrigger });
+        return;
+      }
+
+      if (fx === "memory") {
+        const mtl = gsap.timeline({
+          defaults: { ease: "none" },
+          scrollTrigger: { trigger: fig, start: "top 88%", end: "bottom 45%", scrub: 1 },
+        });
+        mtl.fromTo(fig, { clipPath: "inset(0% 0% 100% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", ease: "steps(3)", duration: 1 }, 0);
+        if (img) mtl.fromTo(img, { yPercent: -6 }, { yPercent: 6, ease: "none", duration: 1 }, 0);
+        return;
+      }
+
+      if (fx === "darken") {
+        if (img) gsap.fromTo(img, { filter: "brightness(0.4)" }, { filter: "brightness(1)", ease: "none",
+          scrollTrigger: { trigger: fig, start: "top 85%", end: "center 45%", scrub: 1 } });
+        gsap.to("[data-story-veil]", { opacity: 0.45, ease: "none",
+          scrollTrigger: { trigger: fig, start: "top 70%", end: "bottom 30%", toggleActions: "play reverse play reverse" } });
+        return;
+      }
+
+      if (fx === "sinking") {
+        if (img) gsap.fromTo(img, { yPercent: -8, scale: 1.12, rotate: 0.6 }, { yPercent: 8, scale: 1, rotate: -0.6, ease: "none",
+          scrollTrigger: { trigger: fig, start: "top 95%", end: "bottom 35%", scrub: 1 } });
+        return;
+      }
+
+      if (fx === "found") {
+        gsap.from(fig, { opacity: 0, y: 36, duration: 0.9, ease: "power3.out",
+          scrollTrigger: { trigger: fig, start: "top 82%", toggleActions: "play none none none" } });
+        if (img) gsap.fromTo(img, { scale: 1.05, rotate: 1.5 }, { scale: 1, rotate: 0, duration: 1.1, ease: "power3.out",
+          scrollTrigger: { trigger: fig, start: "top 82%", toggleActions: "play none none none" } });
+        return;
+      }
+
+      gsap.from(fig, { opacity: 0, y: 30, duration: 0.9, ease: "power3.out",
+        scrollTrigger: { trigger: fig, start: "top 82%", toggleActions: "play none none none" } });
+    });
+
+    // Iroh quote: slow word-by-word reveal, page quiets around it
+    document.querySelectorAll("[data-beat='quote']").forEach((el) => {
+      const words = (el.textContent || "").trim().split(/\s+/);
+      el.innerHTML = words.map((w) => `<span class="qword">${w}</span>`).join(" ");
+      gsap.fromTo(el.querySelectorAll(".qword"), { opacity: 0.12 }, { opacity: 1, ease: "none", stagger: 0.06,
+        scrollTrigger: { trigger: el, start: "top 85%", end: "bottom 35%", scrub: 1 } });
+      ScrollTrigger.create({
+        trigger: el, start: "top 70%", end: "bottom 40%",
+        toggleClass: { targets: ".story-page", className: "is-quiet" },
+      });
+    });
+
+    // Quiet ending: stayed alone, then the next story
+    gsap.from("[data-ending-stayed]", {
+      opacity: 0, y: 24, duration: 1, ease: "power3.out",
+      scrollTrigger: { trigger: "[data-beat='ending']", start: "top 75%", toggleActions: "play none none none" },
+    });
+    gsap.from("[data-ending-next]", {
+      opacity: 0, y: 20, duration: 0.9, ease: "power3.out",
+      scrollTrigger: { trigger: "[data-ending-next]", start: "top 88%", toggleActions: "play none none none" },
+    });
+  }
+</script>

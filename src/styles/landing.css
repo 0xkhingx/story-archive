@@ -785,6 +785,39 @@
 }
 .scroll-pill.is-final .knob-line { display: none; }
 .scroll-pill.is-final .knob-arrow { display: block; }
+
+/* Portal takeover — ENTER transition into the archive */
+.takeover {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: #060504;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+  overflow: hidden;
+}
+.takeover.is-open { opacity: 1; pointer-events: all; }
+.takeover-glow {
+  position: absolute;
+  inset: -10%;
+  background:
+    radial-gradient(ellipse 40% 32% at 50% 54%, rgba(150, 170, 220, 0.35), transparent 70%),
+    radial-gradient(ellipse 20% 16% at 50% 54%, rgba(230, 236, 248, 0.22), transparent 70%);
+  transform: scale(0.7);
+  transition: transform 1s var(--ease-out);
+}
+.takeover.is-open .takeover-glow { transform: scale(1.5); }
+.takeover-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@media (prefers-reduced-motion: reduce) {
+  .takeover, .takeover-glow { transition: none; }
+}
 @media (prefers-reduced-motion: reduce) {
   .knob-line { animation: none; }
 }

@@ -4,10 +4,24 @@ interface Props {
   alt?: string;
   caption?: string;
   wide?: boolean;
+  /** Visual beat: soft rise (default), pinned-in, split halves, fractured memory, shadow reveal, sinking drift. */
+  effect?: "rise" | "found" | "split" | "memory" | "darken" | "sinking";
 }
-const { src, alt = "", caption, wide = false } = Astro.props;
+const { src, alt = "", caption, wide = false, effect = "rise" } = Astro.props;
 ---
-<figure class:list={["story-panel", { wide }]}>
-  <img src={src} alt={alt} loading="lazy" decoding="async" />
+<figure class:list={["story-panel", { wide }]} data-beat="panel" data-effect={effect}>
+  {effect === "split" ? (
+    <>
+      <span class="split-half left" aria-hidden="true">
+        <img src={src} alt="" loading="lazy" decoding="async" data-panel-img />
+      </span>
+      <span class="split-half right" aria-hidden="true">
+        <img src={src} alt="" loading="lazy" decoding="async" />
+      </span>
+      <span class="sr-only">{alt}</span>
+    </>
+  ) : (
+    <img src={src} alt={alt} loading="lazy" decoding="async" data-panel-img />
+  )}
   {caption && <figcaption>{caption}</figcaption>}
 </figure>

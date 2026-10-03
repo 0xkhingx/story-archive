@@ -2,41 +2,98 @@
 import { getCollection } from "astro:content";
 import StoryLayout from "../../layouts/StoryLayout.astro";
 
-const CATEGORY_LABEL = { films: "Films", animation: "Animation", life: "Life" } as const;
-const ORDER = ["films", "animation", "life"] as const;
+const DOORS = [
+  {
+    cat: "films",
+    title: "Films",
+    num: "01",
+    line: "Moments from films that refused to leave.",
+    img: "/images/environments/films-collage.webp",
+    alt: "Retro collage of film characters in torn-paper strips",
+  },
+  {
+    cat: "animation",
+    title: "Animation",
+    num: "02",
+    line: "Drawings that said what people couldn't.",
+    img: "/images/environments/animation-collage.webp",
+    alt: "Retro collage of beloved animation and cartoon characters",
+  },
+  {
+    cat: "life",
+    title: "Life",
+    num: "03",
+    line: "Things that actually happened to me.",
+    img: "/images/environments/street-walk.webp",
+    alt: "Walking through a Lagos street at sunset",
+  },
+];
 
 const all = await getCollection("stories");
-const byDateDesc = (a, b) => +b.data.date - +a.data.date;
-const groups = ORDER.map((cat) => ({
-  cat,
-  items: all
-    .filter((s) => s.data.category === cat)
-    .sort((a, b) => +a.data.date - +b.data.date)
-    .map((s, i) => ({ entry: s, num: String(i + 1).padStart(3, "0") })),
-})).filter((g) => g.items.length > 0);
-
-const fmt = (d) => d.toLocaleDateString("en-GB", { month: "short", year: "numeric" });
+const doors = DOORS.map((d) => ({
+  ...d,
+  count: all.filter((s) => s.data.category === d.cat).length,
+}));
 ---
-<StoryLayout title="Stories — Personal Story Archive" description="Every file in the archive.">
-  <div class="archive-wrap">
-    <p class="label">The archive</p>
-    <h1>Stories</h1>
-    <p class="lede">Every file, in the order it stayed with me. Open one.</p>
-    {groups.map((g) => (
-      <section class="archive-group">
-        <h2>{CATEGORY_LABEL[g.cat]}</h2>
-        {g.items.map(({ entry, num }) => (
-          <a class="archive-row" href={`/stories/${entry.id.replace(/\.mdx?$/, "")}`}>
-            <span class="num">{num}</span>
-            <span>
-              <span class="t" style="display:block">{entry.data.title}</span>
-              <span class="d" style="display:block">{entry.data.description}</span>
-            </span>
-            <time>{fmt(entry.data.date)}</time>
-          </a>
-        ))}
-      </section>
-    ))}
-    <p style="margin-top:3rem"><a href="/" style="font-family:var(--sans);font-size:0.78rem;letter-spacing:0.18em;text-transform:uppercase;opacity:0.7">← Back to entrance</a></p>
+<StoryLayout title="The Archive — Personal Story Archive" description="Three doors into the archive.">
+  <div class="doors-page" data-doors>
+    <header class="doors-head">
+      <p class="label">The archive</p>
+    </header>
+    <nav class="doors" aria-label="Archive sections">
+      {doors.map((d) => (
+        <a class="door" data-door href={`/stories/category/${d.cat}`}>
+          <div class="door-art">
+            <img src={d.img} alt={d.alt} loading="eager" decoding="async" />
+          </div>
+          <span class="door-num" aria-hidden="true">{d.num}</span>
+          <div class="door-body">
+            <h2>{d.title}</h2>
+            <p class="door-line">{d.line}</p>
+            <p class="door-count">{d.count} {d.count === 1 ? "story" : "stories"} filed</p>
+            <span class="door-go">View stories →</span>
+          </div>
+        </a>
+      ))}
+    </nav>
   </div>
+  <script>
+    const nav = document.querySelector("[data-doors]");
+    const doors = Array.from(document.querySelectorAll("[data-door]"));
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const finePointer = window.matchMedia("(pointer: fine)").matches;
+
+    if (finePointer && !reduced) {
+      doors.forEach((door) => {
+        const img = door.querySelector("img");
+        if (!(img instanceof HTMLImageElement)) return;
+        door.addEventListener("pointermove", (e) => {
+          const r = door.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width - 0.5;
+          const y = (e.clientY - r.top) / r.height - 0.5;
+          img.style.transform = `scale(1.07) translate(${(x * 14).toFixed(1)}px, ${(y * 14).toFixed(1)}px)`;
+        });
+        door.addEventListener("pointerleave", () => { img.style.transform = ""; });
+      });
+    }
+
+    doors.forEach((door) => {
+      door.addEventListener("click", (e) => {
+        if (reduced || !(door instanceof HTMLAnchorElement)) return;
+        e.preventDefault();
+        if (nav?.classList.contains("is-leaving")) return;
+        nav?.classList.add("is-leaving");
+        door.classList.add("is-active");
+        window.setTimeout(() => { window.location.href = door.href; }, 650);
+      });
+    });
+
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver(
+        (entries) => entries.forEach((en) => en.target.classList.toggle("is-hot", en.isIntersecting)),
+        { rootMargin: "-42% 0px -42% 0px" }
+      );
+      doors.forEach((door) => io.observe(door));
+    }
+  </script>
 </StoryLayout>

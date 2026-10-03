@@ -1,3 +1,11 @@
 ---
+interface Props {
+  /** "quote" enables slow word-by-word reveal with the page quieting around it. */
+  effect?: "quote";
+}
+const { effect } = Astro.props;
 ---
-<p class="pull-line"><slot /></p>
+<p
+  class:list={["pull-line", { quote: effect === "quote" }]}
+  data-beat={effect === "quote" ? "quote" : "pull"}
+><slot /></p>
