@@ -8,20 +8,40 @@ interface Props {
   effect?: "rise" | "found" | "split" | "memory" | "darken" | "sinking";
 }
 const { src, alt = "", caption, wide = false, effect = "rise" } = Astro.props;
+
+/** Intrinsic dimensions for layout-stable (CLS-free) rendering. */
+const DIMS: Record<string, [number, number]> = {
+  "/images/environments/animation-collage.webp": [1600, 800],
+  "/images/environments/danfo-empty.webp": [1122, 1402],
+  "/images/environments/films-collage.webp": [1600, 793],
+  "/images/environments/rooftop-sit.webp": [1122, 1402],
+  "/images/environments/street-walk.webp": [1122, 1402],
+  "/images/objects/desk-headphones.webp": [1122, 1402],
+  "/images/observer/bus-window.webp": [1122, 1402],
+  "/images/observer/writing-desk.webp": [1122, 1402],
+  "/images/stories/blue-spirit/appa-flier.webp": [1400, 1050],
+  "/images/stories/blue-spirit/cover-zuko.webp": [1448, 1086],
+  "/images/stories/blue-spirit/destiny-poster.webp": [1400, 1050],
+  "/images/stories/blue-spirit/mask-hold.webp": [1400, 1050],
+  "/images/stories/blue-spirit/mask-sinking.webp": [1448, 1086],
+  "/images/stories/blue-spirit/spirit-corridor.webp": [1400, 1050],
+  "/images/stories/blue-spirit/zuko-jet.webp": [1254, 1254],
+};
+const [w, h] = DIMS[src] ?? [];
 ---
 <figure class:list={["story-panel", { wide }]} data-beat="panel" data-effect={effect}>
   {effect === "split" ? (
     <>
       <span class="split-half left" aria-hidden="true">
-        <img src={src} alt="" loading="lazy" decoding="async" data-panel-img />
+        <img src={src} alt="" width={w} height={h} loading="lazy" decoding="async" data-panel-img />
       </span>
       <span class="split-half right" aria-hidden="true">
-        <img src={src} alt="" loading="lazy" decoding="async" />
+        <img src={src} alt="" width={w} height={h} loading="lazy" decoding="async" />
       </span>
       <span class="sr-only">{alt}</span>
     </>
   ) : (
-    <img src={src} alt={alt} loading="lazy" decoding="async" data-panel-img />
+    <img src={src} alt={alt} width={w} height={h} loading="lazy" decoding="async" data-panel-img />
   )}
   {caption && <figcaption>{caption}</figcaption>}
 </figure>

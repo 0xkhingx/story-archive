@@ -1,0 +1,20 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout title="No road here — Personal Story Archive" description="This file is missing from the archive.">
+  <main style="min-height:100svh;display:grid;place-items:center;text-align:center;background:#060504;color:#f5efe0;padding:2rem;">
+    <div>
+      <p style="font-family:var(--sans);font-size:0.75rem;letter-spacing:0.3em;opacity:0.6;">THE ARCHIVE</p>
+      <p style="font-family:var(--display);font-size:clamp(2.5rem,7vw,4.5rem);margin-top:1rem;">via nulla.</p>
+      <p style="font-family:var(--hand);font-size:1.25rem;opacity:0.8;margin-top:1rem;">No road here — this file isn't in the archive.</p>
+      <p style="margin-top:2.5rem;display:flex;gap:2rem;justify-content:center;">
+        <a href="/" style="font-family:var(--sans);font-size:0.78rem;letter-spacing:0.2em;">← ENTRANCE</a>
+        <a href="/stories" style="font-family:var(--sans);font-size:0.78rem;letter-spacing:0.2em;">ARCHIVE →</a>
+      </p>
+    </div>
+  </main>
+</BaseLayout>
+<style>
+  a { text-decoration: none; }
+  a:hover { text-decoration: underline; }
+</style>

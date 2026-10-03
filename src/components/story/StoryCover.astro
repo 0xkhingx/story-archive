@@ -9,6 +9,15 @@ interface Props {
   coverAlt?: string;
 }
 const { category, num, title, thought, meta, cover, coverAlt = "" } = Astro.props;
+
+const DIMS: Record<string, [number, number]> = {
+  "/images/environments/animation-collage.webp": [1600, 800],
+  "/images/environments/films-collage.webp": [1600, 793],
+  "/images/environments/street-walk.webp": [1122, 1402],
+  "/images/observer/bus-window.webp": [1122, 1402],
+  "/images/stories/blue-spirit/cover-zuko.webp": [1448, 1086],
+};
+const [w, h] = DIMS[cover] ?? [];
 ---
 <section class="story-cover" data-beat="cover">
   <p class="eyebrow" data-cover-line>{category} / {num}</p>
@@ -16,6 +25,6 @@ const { category, num, title, thought, meta, cover, coverAlt = "" } = Astro.prop
   <h1 data-cover-line>{title}</h1>
   <p class="thought" data-cover-line>{thought}</p>
   <figure data-cover-figure>
-    <img src={cover} alt={coverAlt} loading="eager" decoding="async" data-cover-img />
+    <img src={cover} alt={coverAlt} width={w} height={h} loading="eager" decoding="async" data-cover-img />
   </figure>
 </section>

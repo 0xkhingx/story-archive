@@ -14,6 +14,8 @@ body {
 }
 img { max-width: 100%; display: block; }
 a { color: inherit; }
+:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
+.paper-world :focus-visible, .story-page :focus-visible { outline-color: var(--blue); }
 ::selection { background: var(--orange); color: var(--ink); }
 
 .paper-world {

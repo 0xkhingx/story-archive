@@ -35,7 +35,7 @@ const next = {
   category: CATEGORY_LABEL[nextEntry.data.category],
 };
 ---
-<StoryLayout title={`${entry.data.title} — Personal Story Archive`} description={entry.data.description}>
+<StoryLayout title={`${entry.data.title} — Personal Story Archive`} description={entry.data.description} backHref={`/stories/category/${entry.data.category}`} backLabel={catLabel}>
   <StoryCover
     category={catLabel}
     num={num}
@@ -50,6 +50,7 @@ const next = {
       <Content />
     </div>
   </div>
+  <a class="story-back" data-story-back href={`/stories/category/${entry.data.category}`}>← {catLabel}</a>
   <StoryEnding next={next} />
 </StoryLayout>
 
@@ -151,5 +152,16 @@ const next = {
       opacity: 0, y: 20, duration: 0.9, ease: "power3.out",
       scrollTrigger: { trigger: "[data-ending-next]", start: "top 88%", toggleActions: "play none none none" },
     });
+  }
+</script>
+<script>
+  const back = document.querySelector("[data-story-back]");
+  const cover = document.querySelector("[data-beat='cover']");
+  if (back && cover && "IntersectionObserver" in window) {
+    new IntersectionObserver((entries) => {
+      entries.forEach((en) => back.classList.toggle("is-show", !en.isIntersecting));
+    }).observe(cover);
+  } else if (back) {
+    back.classList.add("is-show");
   }
 </script>

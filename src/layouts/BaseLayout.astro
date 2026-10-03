@@ -15,12 +15,23 @@ import "../styles/landing.css";
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="theme-color" content="#060504" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cal+Sans&family=Gochi+Hand&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=Space+Grotesk:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cal+Sans&family=Gochi+Hand&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Space+Grotesk:wght@400;500&display=swap"
       rel="stylesheet"
     />
+    <noscript><style>
+      .reveal,.cine-char,.final-line,.final-keep,.final-anyway,.final-mine{opacity:1 !important;transform:none !important;}
+    </style></noscript>
   </head>
   <body>
     <slot />
